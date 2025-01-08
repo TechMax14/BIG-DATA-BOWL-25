@@ -61,7 +61,7 @@ def merge_players_positions(tracking_df, players_df):
     unmatched_players = merged_df[merged_df['position'].isna()]
     
     if not unmatched_players.empty:
-        print(f"WARNING: Found {unmatched_players.shape[0]} players without position information.")
+        print(f"WARN: Found {unmatched_players.shape[0]} players without position information.")
     
     print(f"INFO: Merged position data into tracking data. New shape: {merged_df.shape}")
     

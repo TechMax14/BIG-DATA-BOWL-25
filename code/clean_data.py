@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 
-from constants import RUN_PASS_DICT, MOTION_CAT_DICT, OFFENSIVE_FORMATION_DICT
+from constants import RUN_PASS_DICT, MOTION_CAT_DICT, OFFENSIVE_FORMATION_DICT, REC_ALIGNMENT_DICT
 
 def rotate_direction_and_orientation(df: pd.DataFrame) -> pd.DataFrame:
     """
@@ -134,7 +134,7 @@ def clean_data(opt_df: pd.DataFrame) -> pd.DataFrame:
     
     return opt_df
 
-def convert_to_DICT(df, RUN_PASS_DICT, MOTION_CAT_DICT, OFFENSIVE_FORMATION_DICT):
+def convert_to_DICT(df, RUN_PASS_DICT, MOTION_CAT_DICT, OFFENSIVE_FORMATION_DICT, REC_ALIGNMENT_DICT):
     """
     Converts the 'RUN_PASS_DICT', 'MOTION_CAT_DICT', and 'OFFENSIVE_FORMATION_DICT' columns in the DataFrame to integers 
     using the provided dictionaries.
@@ -149,15 +149,26 @@ def convert_to_DICT(df, RUN_PASS_DICT, MOTION_CAT_DICT, OFFENSIVE_FORMATION_DICT
     """
     # Convert 'play_type' column using RUN_PASS_DICT
     if 'play_type' in df.columns:
-        df['play_type'] = df['play_type'].map(RUN_PASS_DICT)
+        df['play_type'] = df['play_type'].map(RUN_PASS_DICT).astype(int)
     
     # Convert 'motion_category' column using MOTION_CAT_DICT
     if 'motion_type' in df.columns:
-        df['motion_type'] = df['motion_type'].map(MOTION_CAT_DICT)
+        df['motion_type'] = df['motion_type'].map(MOTION_CAT_DICT)#.astype(int)
     
+
+
     # Convert 'offenseFormation' column using OFFENSIVE_FORMATION_DICT
     if 'offenseFormation' in df.columns:
+        # Replace empty or NaN values with the string 'NaN'
+        df['offenseFormation'] = df['offenseFormation'].fillna('KNEEL') 
         df['offenseFormation'] = df['offenseFormation'].map(OFFENSIVE_FORMATION_DICT)
+
+    # Convert 'receiverAlignment' column using REC_ALIGNMENT_DICT
+    if 'receiverAlignment' in df.columns:
+        # Replace empty or NaN values with the string 'NaN'
+        df['receiverAlignment'] = df['receiverAlignment'].fillna('NaN') 
+        df['receiverAlignment'] = df['receiverAlignment'].map(REC_ALIGNMENT_DICT)
+
     
     # Convert boolean columns to integers (False -> 0, True -> 1)
     if 'inMotionAtBallSnap' in df.columns:

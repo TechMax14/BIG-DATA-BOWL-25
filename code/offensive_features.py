@@ -186,21 +186,34 @@ def count_pre_snap_frames(group):
 def get_time_to_snap(group):
     """
     Calculate the time difference (in seconds) from the first frame to the ball snap.
+    If no BEFORE_SNAP frame exists, default time_to_snap to 0.1.
     """
-
     # Extract the 'time' values for the group
-    first_frame_time = pd.to_datetime(group[group['frameType'] == 'BEFORE_SNAP']['time'].min())  # First frame timestamp
-    ball_snap_data = group[group['frameType'] == 'SNAP']  # Use frameType == 'SNAP' instead of event
-    
+    before_snap_frames = group[group['frameType'] == 'BEFORE_SNAP']
+    ball_snap_data = group[group['frameType'] == 'SNAP']  # Use frameType == 'SNAP'
+
+    if not before_snap_frames.empty:
+        # Get the first frame timestamp
+        first_frame_time = pd.to_datetime(before_snap_frames['time'].min())
+    else:
+        # No BEFORE_SNAP frames; assign default first frame timestamp (arbitrary)
+        first_frame_time = None
+
     if not ball_snap_data.empty:
         snap_time = pd.to_datetime(ball_snap_data['time'].iloc[0])  # Ball snap timestamp
-        # Calculate the time difference in seconds
-        time_to_snap = (snap_time - first_frame_time).total_seconds()
+        
+        if first_frame_time is not None:
+            # Calculate the time difference in seconds
+            time_to_snap = (snap_time - first_frame_time).total_seconds()
+        else:
+            # No BEFORE_SNAP frame, set default value
+            time_to_snap = 0.1
     else:
-        # If no 'ball_snap' event, return NaN or handle accordingly
-        time_to_snap = None  # You could also use np.nan if you prefer
+        # If no SNAP event exists, return default value
+        time_to_snap = 0.1
 
     return time_to_snap
+
 
 
 

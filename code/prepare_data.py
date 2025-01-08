@@ -53,6 +53,7 @@ def aggregate_play_types(plays_df, player_play_df, games_df):
     Returns:
         DataFrame: A combined DataFrame with gameId, playId, play_type, and week.
     """
+    print(f"INFO: [ START OF DATA LOADING]")
     print(f"INFO: Filtering for run and pass plays...")
 
     # Get pass plays
@@ -103,12 +104,12 @@ def aggregate_play_level_features(df, fps_df, plays_df):
     merged_df = merged_df.merge(plays_df[['gameId', 'playId', 'receiverAlignment']], on=['gameId', 'playId'], how='left')
 
     # INFO statement about the resulting DataFrame size
-    print(f"INFO: Merged DataFrame contains {merged_df.shape[0]} rows and {merged_df.shape[1]} columns.")
+    print(f"INFO: Merged DataFrame contains {merged_df.shape[0]} rows and {merged_df.shape[1]} columns.\n")
     
     return merged_df
 
 
-def final_merge(agg_df, def_features, off_features):
+def final_merge(agg_df, def_features_data, off_features_data):
     """
     Merges three DataFrames (agg_df, def_features, off_features) on gameId and playId.
 
@@ -121,9 +122,9 @@ def final_merge(agg_df, def_features, off_features):
     - merged_df (DataFrame): Data frame with all features from agg_df, def_features, and off_features merged.
     """
     # Merge agg_df and def_features on gameId and playId
-    merged_df = pd.merge(agg_df, def_features, on=['gameId', 'playId'], how='left')
+    merged_df = pd.merge(agg_df, def_features_data, on=['gameId', 'playId'], how='left')
     
     # Merge the result with off_features on gameId and playId
-    merged_df = pd.merge(merged_df, off_features, on=['gameId', 'playId'], how='left')
+    merged_df = pd.merge(merged_df, off_features_data, on=['gameId', 'playId'], how='left')
     
     return merged_df
